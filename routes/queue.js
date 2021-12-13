@@ -1,55 +1,87 @@
 const express = require('express');
 const router = express.Router();
-const Pasien = require('../models/pasien');
 
-//All
+const jwt = require('jsonwebtoken');
+
+const Queue = require('../models/rs');
+
+router.use(validateJWT);
+
+//All Queues
 router.get('/', async (req, res) => {
     try {
-        const listPasien = await Pasien.find();
-        res.json({ok: true, data: listPasien});
+        const listQueue = await Queue.find();
+        res.json({ok: true, data: listQueue});
     } catch (err) {
         res.status(500).json({ok: false, message: err.message});
     }
 })
 
+//One Queue
+router.get('/:id', getQueueByID, async (req, res) => {
+    res.json({ok: true, data: res.antrian});
+})
+
+//Create Queue
+router.post('/', async (req, res) => {
+    const {nama, dokter, max} = req.body;
+    const queue = new Queue({nama, dokter, max});
+    try {
+        const newQueue = await queue.save();
+        res.status(201).json({ok: true, data: newQueue});
+    } catch (err) {
+        res.status(400).json({ok: false, message: err.message});
+    }
+})
+
 //Front
-router.get('/:id', getPasienByID, (req, res) => {
-    res.json({ok: true, data: res.pasien});
+router.get('/:id/front', getQueueByID, (req, res) => {
+    res.json({ok: true, data: res.antrian.queue[0]});
 })
 
 //Insert
-router.post('/', async (req, res) => {
-    const {nama, nik} = req.body;
-    const pasien = new Pasien({nama, nik});
+router.post('/:id', getQueueByID, async (req, res) => {
     try {
-        const newPasien = await pasien.save();
-        res.status(201).json({ok: true, data: newPasien});        
+        res.antrian.queue.push(req.user._id);
+        const newQueue = await res.antrian.save();
+        res.status(201).json({ok: true, data: newQueue});
     } catch (err) {
         res.status(400).json({ok: false, message: err.message});
     }
 })
 
 //Delete Front
-router.delete('/:id', getPasienByID, (req, res) => {
+router.delete('/:id', getQueueByID, (req, res) => {
     try {
-        res.pasien.remove();
-        res.json({ok: true, deleted_data: res.pasien});
+        res.queue.remove();
+        res.json({ok: true, deleted_data: res.queue});
     } catch (err) {
         res.status(500).json({ok: false, message: err.message});
     }
 })
 
-async function getPasienByID(req, res, next) {
-    let pasien;
+async function getQueueByID(req, res, next) {
+    let queue;
     try {
-        pasien = await Pasien.findById(req.params.id);
-        if(pasien == null) {
-            return res.status(404).json({ok: false, message: 'Pasien not Found'})
+        queue = await Queue.findById(req.params.id);
+        if(queue == null) {
+            return res.status(404).json({ok: false, message: 'Queue not Found'})
         }
     } catch (err) {
         res.status(500).json({ok: false, message: err.message});
     }
-    res.pasien = pasien;
+    res.antrian = queue;
+    next();
+}
+
+function validateJWT(req, res, next) {
+    let user;
+    try {
+        user = jwt.verify(req.body.token, process.env.JWT_SECRET)
+    } catch (err) {
+        return res.status(401).json({ok: false, message: err.message});
+    }
+    req.user = user;
     next();
 }
 
