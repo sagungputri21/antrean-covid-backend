@@ -26,11 +26,13 @@ router.post('/', async (req, res) => {
 //login
 router.get('/', async (req, res) => {
   const {email, password, dokter} = req.body;
+  
   const user = dokter ? await Dokter.findOne({email}) : await Pasien.findOne({email});
+  if(!user) return res.status(401).json({ok: false, message: 'Email or Password is incorrect!'});
   
   const validated = await bcrypt.compare(password, user.password);
+  if(!validated) return res.status(401).json({ok: false, message: 'Email or Password is incorrect!'});
   
-  if(!validated) return res.json({ok: false, message: 'Username or Password is incorrect!'});
   const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET, {expiresIn: '1h'});
   res.json({ok: true, message: 'Logged In', token});
 });
