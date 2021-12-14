@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 
 const Queue = require('../models/rs');
 
+const Pasien = require('../models/pasien')
+
 router.use(validateJWT);
 
 //All Queues
@@ -60,6 +62,25 @@ router.delete('/:id', getQueueByID, (req, res) => {
     }
 })
 
+//Update status pasien
+router.get('/status/:id', async (req, res) => {
+    try {
+
+        pasien = await Pasien.findById(req.params.id)
+        if(queue == null) {
+            return res.status(404).json({ok: false, message: 'Queue not Found'})
+        }
+        console.log(pasien)
+        pasien.findByIdAndUpdate(req.params.id, {$set: {idStatus : 1}})
+        pasien++;
+        pasien.save()
+        res.status(200).json({ok: true, message: 'Berhasil Ditambahkan'})
+    } catch (err) {
+        res.status(500).json({ok: false, message: err.message});
+    }
+
+})
+
 async function getQueueByID(req, res, next) {
     let queue;
     try {
@@ -74,10 +95,12 @@ async function getQueueByID(req, res, next) {
     next();
 }
 
+
+
 function validateJWT(req, res, next) {
     let user;
     try {
-        user = jwt.verify(req.body.token, process.env.JWT_SECRET)
+        user = jwt.verify(req.headers.token, process.env.JWT_SECRET)
     } catch (err) {
         return res.status(401).json({ok: false, message: err.message});
     }
