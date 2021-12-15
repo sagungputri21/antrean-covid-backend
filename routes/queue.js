@@ -53,10 +53,11 @@ router.post('/:id', getQueueByID, async (req, res) => {
 })
 
 //Delete Front
-router.delete('/:id', getQueueByID, (req, res) => {
+router.delete('/:id', getQueueByID, async (req, res) => {
     try {
-        res.queue.remove();
-        res.json({ok: true, deleted_data: res.queue});
+        res.antrian.queue.shift();
+        const newQueue = await res.antrian.save();
+        res.json({ok: true, data: newQueue});
     } catch (err) {
         res.status(500).json({ok: false, message: err.message});
     }
@@ -66,10 +67,9 @@ router.delete('/:id', getQueueByID, (req, res) => {
 router.patch('/status/:id', async (req, res) => {
     let pasien;
     try {
-
         pasien = await Pasien.findById(req.params.id)
         if(pasien.idStatus == 2){
-            return res.status(500).json({ok: false, message: "Sudah vaksin 2 Kali"});
+            return res.status(400).json({ok: false, message: "Sudah vaksin 2 Kali"});
         }
         console.log(pasien)
         pasien.idStatus++
@@ -78,7 +78,6 @@ router.patch('/status/:id', async (req, res) => {
     } catch (err) {
         res.status(500).json({ok: false, message: err.message});
     }
-
 })
 
 async function getQueueByID(req, res, next) {
@@ -95,14 +94,15 @@ async function getQueueByID(req, res, next) {
     next();
 }
 
-
-
 function validateJWT(req, res, next) {
     let user;
     try {
-        user = jwt.verify(req.headers.token, process.env.JWT_SECRET)
+        const authHeader = req.headers.authorization;
+        const token = authHeader && authHeader.split(' ')[3];
+        if(token == null) return res.status(401).json({ok: false, message: 'JWT Token must be provided'});
+        user = jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {
-        return res.status(401).json({ok: false, message: err.message});
+        return res.status(403).json({ok: false, message: err.message});
     }
     req.user = user;
     next();

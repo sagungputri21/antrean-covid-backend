@@ -1,51 +1,80 @@
 # antrean-covid-backend
-
 This repository is specifically for the project backend
 
-# Notes :
+# API URL
+https://vaksin-server.herokuapp.com/
 
-- pilih issues yang mau dikerjain, tandain issues yg dipilih (bisa lewat comment)
-- abis pilih buat branch baru
-- terus kalo udh selesai kerjain codingannya (dah aman) pull request
+# Required Header
+Authorization: key API_KEY
 
-# Website :
-TBA
+# Queue Request Required Header
+Authorization: key API_KEY Bearer JWT_TOKEN
 
-# Routes : 
-##route login
-###Register
-```http
+# Routes
+## Auth
+### Register
+``http
     [POST] /auth/register
-```
-#####Requirement
-	"email" = type : string 
-	"password" = type : string
-	"nama" = type : string
-	"nik" = type : string
-	"dokter" = boolean
+``
 
-  
-#####Header
-    key = API key
+#### Body
+"email": User Email Address (String)\
+"password": User Password (String)\
+"nama": User Full Name (String)\
+"nik": User NIK (String)\
+"dokter": Set true if the user is a doctor, false if the user is a patient (Boolean)
 
-###Login
-```http
+### Login
+``http
     [POST] /auth/login
-```
-####Requirement
-    "email" :  = type : string 
-	"password" = type : string
-	"dokter" = boolean
+``
 
-####Header 
-    key = API key
+#### Body
+"email": User Email Address (String) \
+"password": User Password (String)\
+"dokter": Set true if the user is a doctor, false if the user is a patient (Boolean)
 
-##queue
-###Addstatus
-```http
-    [PATCH]/api/queue/status/:id
-```
+## Queue
+### Get All Queue
+``http
+    [GET] /api/queue
+``
 
-####Header
-    - Key = API key
-    - Token = JWT 
+### Get One Queue
+``http
+    [GET] /api/queue/:id
+``
+
+### Get the Front Patient of a Queue
+``http
+    [GET] /api/queue/:id/front
+``
+
+
+### Insert Patient to the Back of a Queue
+``http
+    [POST] /api/queue/:id
+``
+
+
+### Delete the Front Patient of a Queue
+``http
+    [DELETE] /api/queue/:id
+``
+
+
+### Create Queue
+``http
+    [POST] /api/queue
+``
+
+#### Body
+"nama": Queue Name (Usually Hospital Name) (String)\
+"dokter": ID of the doctor who created this queue (ObjectId)\
+"max": Maximum people before the queue overflows
+
+
+### Add Vaccine Status
+``http
+    [PATCH] /api/queue/status/:id
+``
