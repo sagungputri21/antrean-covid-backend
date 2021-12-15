@@ -64,7 +64,7 @@ router.delete('/:id', getQueueByID, (req, res) => {
 })
 
 //Update status pasien
-router.get('/status/:id', async (req, res) => {
+router.patch('/status/:id', async (req, res) => {
     try {
 
         pasien = await Pasien.findById(req.params.id)
