@@ -23,7 +23,7 @@ TBA
 	"nama" = type : string
 	"nik" = type : string
 	"dokter" = boolean
-	"idStatus" = number
+
   
 #####Header
     key = API key
