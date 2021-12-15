@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken');
 const Queue = require('../models/rs');
 
 const Pasien = require('../models/pasien');
-const pasien = require('../models/pasien');
 
 router.use(validateJWT);
 
@@ -65,6 +64,7 @@ router.delete('/:id', getQueueByID, (req, res) => {
 
 //Update status pasien
 router.patch('/status/:id', async (req, res) => {
+    let pasien;
     try {
 
         pasien = await Pasien.findById(req.params.id)
