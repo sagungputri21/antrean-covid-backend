@@ -9,8 +9,8 @@ const Pasien = require('../models/pasien');
 
 //register
 router.post('/register', async (req, res) => {
-  const { nama, nik, email, password, dokter, idStatus } = req.body;
-  const user = dokter ? new Dokter({ email, password, nama, nik }) : new Pasien({ email, password, nama, nik, idStatus });
+  const { nama, nik, email, password, dokter } = req.body;
+  const user = dokter ? new Dokter({ email, password, nama, nik }) : new Pasien({ email, password, nama, nik });
   try {
     bcrypt.hash(user.password, parseInt(process.env.SALT_ROUNDS), async (err, hash) => {
       if(err) console.log('Hashing error', err);

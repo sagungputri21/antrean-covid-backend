@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken');
 
 const Queue = require('../models/rs');
 
-const Pasien = require('../models/pasien')
+const Pasien = require('../models/pasien');
+const pasien = require('../models/pasien');
 
 router.use(validateJWT);
 
@@ -67,14 +68,13 @@ router.get('/status/:id', async (req, res) => {
     try {
 
         pasien = await Pasien.findById(req.params.id)
-        if(queue == null) {
-            return res.status(404).json({ok: false, message: 'Queue not Found'})
+        if(pasien.idStatus == 2){
+            return res.status(500).json({ok: false, message: "Sudah vaksin 2 Kali"});
         }
         console.log(pasien)
-        pasien.findByIdAndUpdate(req.params.id, {$set: {idStatus : 1}})
-        pasien++;
-        pasien.save()
-        res.status(200).json({ok: true, message: 'Berhasil Ditambahkan'})
+        pasien.idStatus++
+        await pasien.save()
+        res.status.json({ok: true, message: 'Berhasil Ditambahkan'})
     } catch (err) {
         res.status(500).json({ok: false, message: err.message});
     }

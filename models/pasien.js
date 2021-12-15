@@ -19,6 +19,8 @@ const pasienSchema = new mongoose.Schema({
     },
     idStatus: {
         type: Number,
+        default : 0,
+        max : 2,
         required : true  
     },
 })
