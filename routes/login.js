@@ -8,7 +8,7 @@ const Dokter = require('../models/dokter');
 const Pasien = require('../models/pasien');
 
 //register
-router.post('/', async (req, res) => {
+router.post('/register', async (req, res) => {
   const { nama, nik, email, password, dokter } = req.body;
   const user = dokter ? new Dokter({ email, password, nama, nik }) : new Pasien({ email, password, nama, nik });
   try {
@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
 });
 
 //login
-router.get('/', async (req, res) => {
+router.post('/login', async (req, res) => {
   const {email, password, dokter} = req.body;
   
   const user = dokter ? await Dokter.findOne({email}) : await Pasien.findOne({email});

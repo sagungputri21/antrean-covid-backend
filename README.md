@@ -10,3 +10,42 @@ This repository is specifically for the project backend
 
 # Website :
 TBA
+
+# Routes : 
+##route login
+###Register
+```http
+    [POST] /auth/register
+```
+#####Requirement
+	"email" = type : string 
+	"password" = type : string
+	"nama" = type : string
+	"nik" = type : string
+	"dokter" = boolean
+
+  
+#####Header
+    key = API key
+
+###Login
+```http
+    [POST] /auth/login
+```
+####Requirement
+    "email" :  = type : string 
+	"password" = type : string
+	"dokter" = boolean
+
+####Header 
+    key = API key
+
+##queue
+###Addstatus
+```http
+    [PATCH]/api/queue/status/:id
+```
+
+####Header
+    - Key = API key
+    - Token = JWT 

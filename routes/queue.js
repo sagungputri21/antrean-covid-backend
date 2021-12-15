@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 
 const Queue = require('../models/rs');
 
+const Pasien = require('../models/pasien');
+
 router.use(validateJWT);
 
 //All Queues
@@ -60,6 +62,25 @@ router.delete('/:id', getQueueByID, (req, res) => {
     }
 })
 
+//Update status pasien
+router.patch('/status/:id', async (req, res) => {
+    let pasien;
+    try {
+
+        pasien = await Pasien.findById(req.params.id)
+        if(pasien.idStatus == 2){
+            return res.status(500).json({ok: false, message: "Sudah vaksin 2 Kali"});
+        }
+        console.log(pasien)
+        pasien.idStatus++
+        await pasien.save()
+        res.status.json({ok: true, message: 'Berhasil Ditambahkan'})
+    } catch (err) {
+        res.status(500).json({ok: false, message: err.message});
+    }
+
+})
+
 async function getQueueByID(req, res, next) {
     let queue;
     try {
@@ -74,10 +95,12 @@ async function getQueueByID(req, res, next) {
     next();
 }
 
+
+
 function validateJWT(req, res, next) {
     let user;
     try {
-        user = jwt.verify(req.body.token, process.env.JWT_SECRET)
+        user = jwt.verify(req.headers.token, process.env.JWT_SECRET)
     } catch (err) {
         return res.status(401).json({ok: false, message: err.message});
     }

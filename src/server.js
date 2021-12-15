@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(validateAPIKey);
 
 const loginRouter = require('../routes/login.js');
-app.use('/login', loginRouter);
+app.use('/auth', loginRouter);
 
 const queueRouter = require('../routes/queue.js');
 app.use('/api/queue', queueRouter);
@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
 });
 
 function validateAPIKey(req, res, next) {
-  if (req.query.key != process.env.API_KEY) {
+  if (req.headers.key != process.env.API_KEY) {
     return res.status(401).json({ ok: false, message: 'Invalid API Key' });
   }
   next();

@@ -16,7 +16,13 @@ const pasienSchema = new mongoose.Schema({
     nik: {
         type: String,
         required: true
-    }
+    },
+    idStatus: {
+        type: Number,
+        default : 0,
+        max : 2,
+        required : true  
+    },
 })
 
 module.exports = mongoose.model('Pasien', pasienSchema);
