@@ -45,6 +45,7 @@ router.post('/:id', getQueueByID, async (req, res) => {
     try {
         if(res.antrian.queue.length == res.antrian.max) return res.status(400).json({ok: false, message: 'Queue is full'});
         res.antrian.queue.push(req.user._id);
+        res.antrian.populate('queue');
         const newQueue = await res.antrian.save();
         res.status(201).json({ok: true, data: newQueue});
     } catch (err) {
