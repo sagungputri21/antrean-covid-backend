@@ -42,24 +42,24 @@ Authorization: Bearer *JWT_TOKEN*
 
 ### Get One Queue
 ``http
-    [GET] /api/queue/:id
+    [GET] /api/queue/:id_queue
 ``
 
 ### Get the Front Patient of a Queue
 ``http
-    [GET] /api/queue/:id/front
+    [GET] /api/queue/:id_queue/front
 ``
 
 
 ### Insert Patient to the Back of a Queue
 ``http
-    [POST] /api/queue/:id
+    [POST] /api/queue/:id_queue
 ``
 
 
 ### Delete the Front Patient of a Queue
 ``http
-    [DELETE] /api/queue/:id
+    [DELETE] /api/queue/:id_queue
 ``
 
 
@@ -70,11 +70,10 @@ Authorization: Bearer *JWT_TOKEN*
 
 #### Body
 "nama": Queue Name (Usually Hospital Name) (String)\
-"dokter": ID of the doctor who created this queue (ObjectId)\
 "max": Maximum people before the queue overflows
 
 
 ### Add Vaccine Status
 ``http
-    [PATCH] /api/queue/status/:id
+    [PATCH] /api/queue/status/:id_pasien
 ``

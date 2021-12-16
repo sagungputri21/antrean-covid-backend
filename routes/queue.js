@@ -25,8 +25,8 @@ router.get('/:id', getQueueByID, async (req, res) => {
 
 //Create Queue
 router.post('/', async (req, res) => {
-    const {nama, dokter, max} = req.body;
-    const queue = new Queue({nama, dokter, max});
+    const {nama, max} = req.body;
+    const queue = new Queue({nama, dokter: req.user._id, max});
     try {
         const newQueue = await queue.save();
         res.status(201).json({ok: true, data: newQueue});
