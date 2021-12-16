@@ -11,5 +11,4 @@ function hashCode(password){
     }
 }
 
-
 module.exports[hashCode];
