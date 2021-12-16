@@ -5,10 +5,10 @@ This repository is specifically for the project backend
 https://vaksin-server.herokuapp.com/
 
 # Required Header
-Authorization: key API_KEY
+Key: API *API_KEY*
 
-# Queue Request Required Header
-Authorization: key API_KEY Bearer JWT_TOKEN
+# Authorization Header (Required for accessing queue)
+Authorization: Bearer *JWT_TOKEN*
 
 # Routes
 ## Auth
