@@ -4,7 +4,6 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 
 const Queue = require('../models/rs');
-
 const Pasien = require('../models/pasien');
 
 router.use(validateJWT);
@@ -12,7 +11,7 @@ router.use(validateJWT);
 //All Queues
 router.get('/', async (req, res) => {
     try {
-        const listQueue = await Queue.find();
+        const listQueue = await Queue.find().populate('dokter').populate('queue');
         res.json({ok: true, data: listQueue});
     } catch (err) {
         res.status(500).json({ok: false, message: err.message});
@@ -44,6 +43,7 @@ router.get('/:id/front', getQueueByID, (req, res) => {
 //Insert
 router.post('/:id', getQueueByID, async (req, res) => {
     try {
+        if(res.antrian.queue.length == res.antrian.max) return res.status(400).json({ok: false, message: 'Queue is full'});
         res.antrian.queue.push(req.user._id);
         const newQueue = await res.antrian.save();
         res.status(201).json({ok: true, data: newQueue});
@@ -71,10 +71,9 @@ router.patch('/status/:id', async (req, res) => {
         if(pasien.idStatus == 2){
             return res.status(400).json({ok: false, message: "Sudah vaksin 2 Kali"});
         }
-        console.log(pasien)
         pasien.idStatus++
         await pasien.save()
-        res.status.json({ok: true, message: 'Berhasil Ditambahkan'})
+        res.json({ok: true, message: 'Berhasil Ditambahkan'})
     } catch (err) {
         res.status(500).json({ok: false, message: err.message});
     }
@@ -83,7 +82,7 @@ router.patch('/status/:id', async (req, res) => {
 async function getQueueByID(req, res, next) {
     let queue;
     try {
-        queue = await Queue.findById(req.params.id);
+        queue = await Queue.findById(req.params.id).populate('dokter').populate('queue');
         if(queue == null) {
             return res.status(404).json({ok: false, message: 'Queue not Found'})
         }
@@ -98,7 +97,7 @@ function validateJWT(req, res, next) {
     let user;
     try {
         const authHeader = req.headers.authorization;
-        const token = authHeader && authHeader.split(' ')[3];
+        const token = authHeader && authHeader.split(' ')[1];
         if(token == null) return res.status(401).json({ok: false, message: 'JWT Token must be provided'});
         user = jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {
