@@ -26,6 +26,11 @@ app.get('/', (req, res) => {
   res.json({ ok: true, message: 'Connected to Server!' });
 });
 
+function logRequest(req, res, next) {
+  const {headers, body, params, query} = req;
+  console.log({headers, body, params, query});
+}
+
 function validateAPIKey(req, res, next) {
   const keyHeader = req.headers.key;
   const key = keyHeader && keyHeader.split(' ')[1];
