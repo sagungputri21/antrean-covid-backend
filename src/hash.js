@@ -11,4 +11,5 @@ function hashCode(password){
     }
 }
 
-module.exports[hashCode];
+
+module.exports = hashCode;
