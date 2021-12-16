@@ -27,8 +27,8 @@ app.get('/', (req, res) => {
 });
 
 function validateAPIKey(req, res, next) {
-  const authHeader = req.headers.authorization;
-  const key = authHeader && authHeader.split(' ')[1];
+  const keyHeader = req.headers.key;
+  const key = keyHeader && keyHeader.split(' ')[1];
   if (key != process.env.API_KEY) {
     return res.status(401).json({ ok: false, message: 'Invalid API Key' });
   }
