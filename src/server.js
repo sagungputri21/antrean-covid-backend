@@ -12,7 +12,7 @@ const db = mongoose.connection;
 db.on('error', (err) => console.error('[Error]', err));
 db.once('open', () => console.log('Connected to database'));
 
-app.use(cors());
+app.use(cors({origin: '*'}));
 app.use(express.json());
 app.use(logRequest);
 app.use(validateAPIKey);
