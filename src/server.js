@@ -14,8 +14,8 @@ db.once('open', () => console.log('Connected to database'));
 
 app.use(cors());
 app.use(express.json());
-app.use(logRequest);
-app.use(validateAPIKey);
+// app.use(logRequest);
+// app.use(validateAPIKey);
 
 const loginRouter = require('../routes/login.js');
 app.use('/auth', loginRouter);
